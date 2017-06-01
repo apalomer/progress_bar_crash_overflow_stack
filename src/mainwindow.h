@@ -20,9 +20,6 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-signals:
-    void newIteration(int i);
-
 private slots:
 
     void on_pushButton_nowhait_clicked();
