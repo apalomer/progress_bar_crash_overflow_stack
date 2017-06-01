@@ -20,7 +20,6 @@ public slots:
     void process();
     void quit();
 protected:
-    QThread workerThread_;
     int n_iterations;
 };
 
