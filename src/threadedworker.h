@@ -2,6 +2,7 @@
 #define THREADEDWORKER_H
 
 #include <unistd.h>
+#include <atomic>
 
 #include <QtCore>
 #include <QObject>
@@ -20,6 +21,7 @@ public slots:
     void process();
     void quit();
 protected:
+    std::atomic_bool isRunning_;
     int n_iterations;
 };
 

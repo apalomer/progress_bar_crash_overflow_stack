@@ -32,8 +32,7 @@ void MainWindow::on_pushButton_nowhait_clicked()
     connect(work,SIGNAL(finished()),progress,SLOT(close()));
     connect(work, SIGNAL(finished()), work, SLOT(deleteLater()));
     connect(th, SIGNAL(finished()), th, SLOT(deleteLater()));
-    connect(progress,SIGNAL(canceled()),th,SLOT(quit()));
-    connect(progress,SIGNAL(canceled()),work,SLOT(quit()));
+    connect(progress,SIGNAL(canceled()),work,SLOT(quit()),Qt::DirectConnection);
     th->start();
     qDebug()<<"exit no whait push button callback";
 }
@@ -50,7 +49,8 @@ void MainWindow::on_pushButton_whait_clicked()
     ThreadedWorker* work = new ThreadedWorker(ui->spinBox->value());
     connect(work,SIGNAL(status(int)),progress,SLOT(setValue(int)));
     connect(work,SIGNAL(finished()),progress,SLOT(close()));
-    connect(progress,SIGNAL(canceled()),work,SLOT(quit()));
+    connect(work,SIGNAL(finished()),work,SLOT(deleteLater()));
+    connect(progress,SIGNAL(canceled()),work,SLOT(quit()),Qt::DirectConnection);
     work->process();
     qDebug()<<"exit whait push button callback";
 }
