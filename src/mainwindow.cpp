@@ -1,56 +1,36 @@
 #include "mainwindow.h"
+#include "threadedworker.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
-{
-    ui->setupUi(this);
-    progress = new QProgressDialog("Iterating...","Cancell", 0, ui->spinBox->value(), this);
+#include <QEvent>
+#include <QDebug>
+
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::MainWindow) {
+  ui->setupUi(this);
 }
 
-MainWindow::~MainWindow()
-{
-    delete ui;
+MainWindow::~MainWindow() { delete ui; }
+
+QProgressDialog *MainWindow::createProgressDialog() {
+  QProgressDialog *progress = new QProgressDialog("Iterating...", "Cancell", 0,
+                                                  ui->spinBox->value(), this);
+  progress->setWindowFlag(Qt::CustomizeWindowHint, true);
+  progress->setWindowFlag(Qt::WindowCloseButtonHint, false);
+  progress->setWindowFlag(Qt::WindowContextHelpButtonHint, false);
+  progress->installEventFilter(this);
+  return progress;
 }
 
-void MainWindow::on_pushButton_nowhait_clicked()
-{
-    qDebug()<<"No whait push button clicked";
-    // Run in new thread and create a progress bar
-    progress->setMinimum(0);
-    progress->setMaximum(ui->spinBox->value());
-    progress->setWindowModality(Qt::WindowModal);
-    progress->setAutoClose(true);
-    progress->show();
-    QThread* th = new QThread;
-    ThreadedWorker* work = new ThreadedWorker(ui->spinBox->value());
-    work->moveToThread(th);
-    connect(th, SIGNAL(started()), work, SLOT(process()));
-    connect(work,SIGNAL(status(int)),progress,SLOT(setValue(int)));
-    connect(work, SIGNAL(finished()), th, SLOT(quit()));
-    connect(work,SIGNAL(finished()),progress,SLOT(close()));
-    connect(work, SIGNAL(finished()), work, SLOT(deleteLater()));
-    connect(th, SIGNAL(finished()), th, SLOT(deleteLater()));
-    connect(progress,SIGNAL(canceled()),work,SLOT(quit()),Qt::DirectConnection);
-    th->start();
-    qDebug()<<"exit no whait push button callback";
+void MainWindow::on_pushButton_nowhait_clicked() {
+  // Run in new thread and create a progress bar
+  ThreadedWorker::runInThread(ui->spinBox->value(), createProgressDialog(),
+                              this);
 }
 
-void MainWindow::on_pushButton_whait_clicked()
-{
-    qDebug()<<"Whait push button clicked";
-    // Run in new thread and create a progress bar
-    progress->setMinimum(0);
-    progress->setMaximum(ui->spinBox->value());
-    progress->setWindowModality(Qt::WindowModal);
-    progress->setAutoClose(true);
-    progress->show();
-    ThreadedWorker* work = new ThreadedWorker(ui->spinBox->value());
-    connect(work,SIGNAL(status(int)),progress,SLOT(setValue(int)));
-    connect(work,SIGNAL(finished()),progress,SLOT(close()));
-    connect(work,SIGNAL(finished()),work,SLOT(deleteLater()));
-    connect(progress,SIGNAL(canceled()),work,SLOT(quit()),Qt::DirectConnection);
-    work->process();
-    qDebug()<<"exit whait push button callback";
+void MainWindow::on_pushButton_whait_clicked() {
+  // Run in new thread and create a progress bar
+  QProgressDialog *progress = createProgressDialog();
+  progress->setWindowModality(Qt::WindowModal);
+  ThreadedWorker::runInThread(ui->spinBox->value(), progress, this);
 }
