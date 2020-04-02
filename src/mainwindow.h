@@ -27,12 +27,12 @@ public:
 
 private slots:
 
-  void on_pushButton_nowhait_clicked();
+  void on_long_pushButton_clicked();
 
-  void on_pushButton_whait_clicked();
+  void on_short_pushButton_clicked();
 
 private:
-  QProgressDialog *createProgressDialog();
+  QProgressDialog *createProgressDialog(int max_value);
 
   Ui::MainWindow *ui;
 };

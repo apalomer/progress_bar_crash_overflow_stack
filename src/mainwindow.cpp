@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "threadedworker.h"
+#include "fastthreadedworker.h"
 #include "ui_mainwindow.h"
 
 #include <QEvent>
@@ -12,25 +13,23 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow() { delete ui; }
 
-QProgressDialog *MainWindow::createProgressDialog() {
+QProgressDialog *MainWindow::createProgressDialog(int max_value) {
   QProgressDialog *progress = new QProgressDialog("Iterating...", "Cancell", 0,
-                                                  ui->spinBox->value(), this);
+                                                  max_value, this);
   progress->setWindowFlag(Qt::CustomizeWindowHint, true);
   progress->setWindowFlag(Qt::WindowCloseButtonHint, false);
   progress->setWindowFlag(Qt::WindowContextHelpButtonHint, false);
-  progress->installEventFilter(this);
+  progress->setWindowModality(Qt::WindowModal);
   return progress;
 }
 
-void MainWindow::on_pushButton_nowhait_clicked() {
+void MainWindow::on_long_pushButton_clicked() {
   // Run in new thread and create a progress bar
-  ThreadedWorker::runInThread(ui->spinBox->value(), createProgressDialog(),
+  ThreadedWorker::runInThread(ui->long_spinBox->value(), createProgressDialog(ui->long_spinBox->value()),
                               this);
 }
 
-void MainWindow::on_pushButton_whait_clicked() {
+void MainWindow::on_short_pushButton_clicked() {
   // Run in new thread and create a progress bar
-  QProgressDialog *progress = createProgressDialog();
-  progress->setWindowModality(Qt::WindowModal);
-  ThreadedWorker::runInThread(ui->spinBox->value(), progress, this);
+  FastThreadedWorker::runInThread(ui->short_spinBox->value(), createProgressDialog(ui->short_spinBox->value()), this);
 }
