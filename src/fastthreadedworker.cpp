@@ -1,4 +1,4 @@
-#include "FastThreadedWorker.h"
+#include "fastthreadedworker.h"
 
 #include <thread>
 
