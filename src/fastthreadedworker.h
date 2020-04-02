@@ -1,10 +1,12 @@
-#ifndef FASTThreadedWorker_H
-#define FASTThreadedWorker_H
+#ifndef FASTTHREADEDWORKER_H
+#define FASTTHREADEDWORKER_H
 
 #include <atomic>
 
 #include <QObject>
-#include <QProgressDialog>
+#include <QMutex>
+
+#include "progressdialog.h"
 
 #ifdef _WIN32
 #ifdef THREADWORKER
@@ -19,7 +21,7 @@
 class THREADWORKEREXPORT FastThreadedWorker : public QObject {
   Q_OBJECT
 public:
-  static void runInThread(int n_iterations, QProgressDialog *progress,
+  static void runInThread(int n_iterations, ProgressDialog *progress,
                           QWidget *parent);
 
   explicit FastThreadedWorker(int n_iterations, QObject *parent = 0);
@@ -30,10 +32,14 @@ signals:
 public slots:
   void process();
   void quit();
+  void blockProgressDialog();
+  void unblockProgressDialog();
 
 protected:
   std::atomic_bool isRunning_;
+  std::atomic_bool isReady_;
   int n_iterations;
+  QMutex mutex_;
 };
 
-#endif // FASTThreadedWorker_H
+#endif // FASTTHREADEDWORKER_H

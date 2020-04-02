@@ -13,13 +13,14 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow() { delete ui; }
 
-QProgressDialog *MainWindow::createProgressDialog(int max_value) {
-  QProgressDialog *progress = new QProgressDialog("Iterating...", "Cancell", 0,
+ProgressDialog *MainWindow::createProgressDialog(int max_value) {
+  ProgressDialog*progress = new ProgressDialog("Iterating...", "Cancell", 0,
                                                   max_value, this);
   progress->setWindowFlag(Qt::CustomizeWindowHint, true);
   progress->setWindowFlag(Qt::WindowCloseButtonHint, false);
   progress->setWindowFlag(Qt::WindowContextHelpButtonHint, false);
-  progress->setWindowModality(Qt::WindowModal);
+  //progress->setWindowModality(Qt::WindowModal);
+  progress->setWindowModality(Qt::ApplicationModal);
   return progress;
 }
 

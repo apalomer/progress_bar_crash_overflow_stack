@@ -24,9 +24,14 @@ if(OPENMP_FOUND)
  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
 endif()
 
+# Create progress dialog library
+add_library(progressdialog SHARED src/progressdialog.cpp src/progressdialog.h)
+target_link_libraries(progressdialog Qt5::Core Qt5::Widgets )
+target_compile_definitions(progressdialog PRIVATE PROGRESSDIALOG)
+
 # Create threadedworker library
 add_library(threadedworker SHARED src/threadedworker.cpp src/threadedworker.h src/fastthreadedworker.cpp src/fastthreadedworker.h)
-target_link_libraries(threadedworker Qt5::Core Qt5::Widgets )
+target_link_libraries(threadedworker progressdialog)
 target_compile_definitions(threadedworker PRIVATE THREADWORKER)
 
 # Create mainwindow library

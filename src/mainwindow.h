@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QProgressDialog>
+#include "progressdialog.h"
 
 #ifdef _WIN32
 #ifdef MAINWINDOW
@@ -32,7 +32,7 @@ private slots:
   void on_short_pushButton_clicked();
 
 private:
-  QProgressDialog *createProgressDialog(int max_value);
+  ProgressDialog *createProgressDialog(int max_value);
 
   Ui::MainWindow *ui;
 };
