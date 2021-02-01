@@ -37,6 +37,7 @@ void FastThreadedWorker::process() {
     for (int i = 0; i < n_iterations; i++) {
       if (!isRunning_)
         continue;
+      std::this_thread::sleep_for(std::chrono::microseconds(5));
 #pragma omp critical
       {
         emit status(++n);
