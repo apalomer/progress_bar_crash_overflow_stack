@@ -32,13 +32,14 @@ void FastThreadedWorker::process() {
   if (!isRunning_) {
     emit started();
     isRunning_ = true;
+    int n(0);
 #pragma omp parallel for
     for (int i = 0; i < n_iterations; i++) {
       if (!isRunning_)
         continue;
 #pragma omp critical
       {
-        emit status(i);
+        emit status(++n);
       }
     }
     emit finished();

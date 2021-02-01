@@ -35,5 +35,5 @@ target_link_libraries(mainwindow threadedworker)
 target_compile_definitions(mainwindow PRIVATE MAINWINDOW)
 
 # Executable example
-add_executable(progress_bar src/progress_bar_main.cpp)
+add_executable(progress_bar WIN32 src/progress_bar_main.cpp)
 target_link_libraries(progress_bar mainwindow)
